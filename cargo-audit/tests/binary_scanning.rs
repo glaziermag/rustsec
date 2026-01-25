@@ -4,8 +4,8 @@ use std::path::PathBuf;
 
 use abscissa_core::testing::prelude::*;
 use once_cell::sync::Lazy;
-use tempfile::TempDir;
 use std::{fs, io::Read};
+use tempfile::TempDir;
 
 /// Directory containing the advisory database.
 ///
@@ -59,7 +59,10 @@ fn oversized_binary_is_rejected() {
     let mut stderr = String::new();
     process.stderr().read_to_string(&mut stderr).unwrap();
     process.wait().unwrap().expect_code(2);
-    assert!(stderr.contains("exceeds max size limit of 1 bytes"), "{stderr}");
+    assert!(
+        stderr.contains("exceeds max size limit of 1 bytes"),
+        "{stderr}"
+    );
 }
 
 #[test]
