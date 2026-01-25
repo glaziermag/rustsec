@@ -13,9 +13,9 @@ pub struct BinCommand {
     #[arg(
         long = "max-binary-size",
         value_name = "BYTES",
-        help = "Maximum binary size in bytes to read"
+        help = "Maximum binary size in bytes to read (default: 100MB; use 0 for unlimited)"
     )]
-    pub(super) max_binary_size: Option<u64>,
+    max_binary_size: Option<u64>,
 
     /// Maximum audit data size in bytes to parse
     #[arg(
@@ -23,7 +23,7 @@ pub struct BinCommand {
         value_name = "BYTES",
         help = "Maximum audit data size in bytes to parse (default: 8MB)"
     )]
-    pub(super) audit_data_size_limit: Option<usize>,
+    audit_data_size_limit: Option<usize>,
 
     /// Paths to the binaries to be scanned
     #[arg(
@@ -36,7 +36,9 @@ pub struct BinCommand {
 
 impl Runnable for BinCommand {
     fn run(&self) {
-        let report = self.auditor().audit_binaries(&self.binary_paths);
+        let mut auditor = self.auditor();
+        auditor.set_binary_scan_limits(self.max_binary_size, self.audit_data_size_limit);
+        let report = auditor.audit_binaries(&self.binary_paths);
         if report.vulnerabilities_found {
             exit(1)
         } else if report.errors_encountered {
