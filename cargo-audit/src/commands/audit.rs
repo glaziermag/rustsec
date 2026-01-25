@@ -321,5 +321,4 @@ mod tests {
         let overridden_config = audit_command.override_config(config.clone()).unwrap();
         assert!(!overridden_config.database.fetch);
     }
-
 }
